@@ -66,9 +66,10 @@ for x in table_data:
 
 total_time_minutes = 0
 
-for x in table_data:
-	if (re.search('^[0-9]+$', str(x.string))) and len(x) < 6:
-		total_time_minutes += int(x.string)
+for call_info in table_data:
+	# use regex to search for only numbers
+	if (re.search('^[0-9]+$', str(call_info.string))):
+		total_time_minutes += int(call_info.string)
 
 def showData():
 	print("\n===== Facebook Data Analysis Script =====")
