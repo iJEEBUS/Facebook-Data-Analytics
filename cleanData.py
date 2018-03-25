@@ -1,21 +1,12 @@
-"""Outputs statistics for contact information FB has collected on you.
+"""
+Outputs statistics for contact information FB has collected on you.
 
 :author Ronad Rounsifer
 :version 3/25/2018 (0.01)
-
-Variables:
-	__URL {str} -- url to users FB data page
-	opened_url {urllib.response} -- opened data page
-	soup {bs4.BeautifulSoup} -- bs4 object of data page
-	divs {list} -- all of the divs in the pages HTML
-	data_map {dict} -- contains parsed data
-	num_contacts {int} -- number of contacts
-	num_calls {int} -- number of phone calls
-	num_texts {int} -- number of texts
-	num_mms {int} -- number of multimedia messages
 """
 from bs4 import BeautifulSoup
 import urllib.request
+import re
 
 # static url
 # no need for dynamic URL at this time
@@ -44,14 +35,55 @@ data_map = { "everything" : divs[1],
 				"mms history" : divs[5]
 				}
 
+# Overview of all the data data on the page
 num_contacts  = len(data_map["contacts"])#len(tables[0].find_all("tr"))
 num_calls = len(data_map["call history"])
 num_texts = len(data_map["sms history"])
 num_mms = len(data_map["mms history"])
 
-print("\n===== Facebook Data Analysis Script =====")
-print("Number of contacts saved: %s" % (num_contacts))
-print("Total number of phone calls: %s" % (num_calls))
-print("Total number of text conversations: %s" % (num_texts))
-print("Total number of multimedia conversations: %s" % (num_mms))
-print("\n")
+table_data = []
+
+for call_info in data_map["call history"].find_all('td'):
+	table_data.append(call_info)
+
+
+# specifics for recorded all histories
+outgoing_calls = 0
+rejected_calls = 0
+missed_calls = 0
+incoming_calls = 0
+users_name = "Ronald Rounsifer" # TODO make this dynamic 
+
+for x in table_data:
+	if x.string == "OUTGOING":
+		outgoing_calls += 1
+	elif x.string == "REJECTED":
+		rejected_calls += 1
+	elif x.string == "MISSED":
+		missed_calls += 1
+	elif x.string == "INCOMING":
+		incoming_calls += 1
+
+total_time_minutes = 0
+
+for x in table_data:
+	if (re.search('^[0-9]+$', str(x.string))) and len(x) < 6:
+		total_time_minutes += int(x.string)
+
+def showData():
+	print("\n===== Facebook Data Analysis Script =====")
+	print("All of this data has been collected by facebook for the account of %s" % (users_name))
+	print("Number of contacts saved: %s" % (num_contacts))
+	print("Total number of phone calls: %s" % (num_calls))
+	print("Total number of text conversations: %s" % (num_texts))
+	print("Total number of multimedia conversations: %s" % (num_mms))
+	print("\n")
+	print("=== Phone call data ===")
+	print("Outgoing: %s" % (outgoing_calls))
+	print("Incoming: %s" % (incoming_calls))
+	print("Rejected: %s" % (rejected_calls))
+	print("Missed: %s" % (missed_calls))
+	print("Time spent in calls: %s minutes" % (total_time_minutes//60))
+	print("\n")
+
+showData()
