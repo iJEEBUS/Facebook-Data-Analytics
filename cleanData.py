@@ -25,8 +25,6 @@ __URL = "file:///Users/user/Desktop/html/contact_info.htm"
 opened_url = urllib.request.urlopen(__URL)
 soup = BeautifulSoup(opened_url, 'html.parser')
 
-print(type(soup))
-
 # Find all divs in the HTML
 divs = soup.find_all("div")
 
@@ -54,6 +52,6 @@ num_mms = len(data_map["mms history"])
 print("\n===== Facebook Data Analysis Script =====")
 print("Number of contacts saved: %s" % (num_contacts))
 print("Total number of phone calls: %s" % (num_calls))
-print("Total number of texts: %s" % (num_texts))
-print("Total number of multimedia messages: %s" % (num_mms))
+print("Total number of text conversations: %s" % (num_texts))
+print("Total number of multimedia conversations: %s" % (num_mms))
 print("\n")
